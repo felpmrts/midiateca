@@ -29,4 +29,8 @@ class Serie_Anime(Midia):
         self.__episodios = episodios
         self.__autor = autor
 
+class Jogo(Midia):
 
+    def __init__(self, titulo, ano, status, nota, genero, horas):
+        super().__init__(titulo, ano, status, nota, genero)
+        self.__horas = horas
