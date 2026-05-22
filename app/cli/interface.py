@@ -3,8 +3,12 @@ import time
 from app.cli import utils
 from app.cli import formularios
 from app.core import models
+from app.database.database import DatabaseManager
 
 def menu():
+
+    #Instanciando banco de dados
+    db = DatabaseManager()
 
     option = 10 #iniciar a variavel
 
@@ -55,54 +59,29 @@ def menu():
 
                         if dados_livro:
 
-                            novo_livro = models.Livro(
-                                titulo=dados_livro["titulo"],
-                                ano=dados_livro["ano"],
-                                status=dados_livro["status"],
-                                nota=dados_livro["nota"],
-                                genero=dados_livro["genero"],
-                                autor=dados_livro["autor"],
-                                paginas=dados_livro["paginas"]
-                            )
+                            db.salvar_midia("Livro", dados_livro)
 
-                            print(f"Objeto {novo_livro} criado com sucesso!")
+                            print("Livro salvo no banco com sucesso!")
                             time.sleep(2)
 
                     case 2:
-                        
+
                         dados_filme = formularios.obter_dados_filme()
-
+                        
                         if dados_filme:
+                            db.salvar_midia("Filme", dados_filme)
 
-                            novo_filme = models.Filme(
-                                titulo=dados_filme["titulo"],
-                                ano=dados_filme["ano"],
-                                status=dados_filme["status"],
-                                nota=dados_filme["nota"],
-                                genero=dados_filme["genero"],
-                                duracao=dados_filme["duracao"]
-                            )
-
-                            print(f"Objeto {novo_filme} criado com sucesso!")
+                            print("Filme salvo no banco com sucesso!")
                             time.sleep(2)
+
                     case 3:
                         
                         dados_serie_anime = formularios.obter_dados_serie_anime()
 
                         if dados_serie_anime:
+                            db.salvar_midia("Serie/Anime", dados_serie_anime)
 
-                            nova_serie_anime = models.Serie_Anime(
-                                titulo=dados_serie_anime["titulo"],
-                                ano=dados_serie_anime["ano"],
-                                status=dados_serie_anime["status"],
-                                nota=dados_serie_anime["nota"],
-                                genero=dados_serie_anime["genero"],
-                                temporadas=dados_serie_anime["temporadas"],
-                                episodios=dados_serie_anime["episodios"],
-                                autor=dados_serie_anime["autor"]
-                            )
-
-                            print(f"Objeto {nova_serie_anime} criado com sucesso!")
+                            print("Série/Anime salvo no banco com sucesso!")
                             time.sleep(2)
                     case 4:
                         
@@ -110,17 +89,11 @@ def menu():
 
                         if dados_jogo:
 
-                            novo_jogo = models.Jogo(
-                                titulo=dados_jogo["titulo"],
-                                ano=dados_jogo["ano"],
-                                status=dados_jogo["status"],
-                                nota=dados_jogo["nota"],
-                                genero=dados_jogo["genero"],
-                                horas=dados_jogo["horas"]
-                            )
+                            db.salvar_midia("Jogo", dados_jogo)
 
-                            print(f"Objeto {novo_jogo} criado com sucesso!")
+                            print("Jogo salvo no banco com sucesso!")
                             time.sleep(2)
+
                     case _:
                         print("Opção inválida. Tente novamente")
                         time.sleep(2)
@@ -130,11 +103,11 @@ def menu():
             case 3:
                 print("teste 3")
             case 4:
-                submenu_opcao_quatro()
+                submenu_opcao_quatro(db)
             case _:
                 print("Opção invalida")
 
-def submenu_opcao_quatro():
+def submenu_opcao_quatro(db):
     
     option = 10
 
@@ -143,11 +116,10 @@ def submenu_opcao_quatro():
         utils.clear_screen()
 
         print(f"==== Visualizar Mídias ====\n")
-        print("1. Ver Tudo")
-        print("2. Apenas Filmes")
-        print("3. Apenas Séries/Animes")
-        print("4. Apenas Livros")
-        print("5. Apenas Jogos")
+        print("1. Apenas Filmes")
+        print("2. Apenas Séries/Animes")
+        print("3. Apenas Livros")
+        print("4. Apenas Jogos")
         print("0. Voltar")
 
         try:
@@ -161,15 +133,66 @@ def submenu_opcao_quatro():
         match option:
             case 0:
                 pass
+            
             case 1:
-                pass
+                utils.clear_screen()
+                print("=== Lista de Filmes ===\n")
+                filmes = db.buscar_midias("Filme")
+                
+                if not filmes:
+                    print("Nenhum filme cadastrado ainda.")
+                else:
+                    i = 1  # Iniciado ANTES do loop
+                    for filme in filmes:
+                        print(f"{i}. {filme[2]} | Status: {filme[4]} | Nota: {filme[5]} ⭐ | Gênero: {filme[6]} | Ano: {filme[3]} | Duração: {filme[9]}h")
+                        i += 1
+                input("\nPressione Enter para voltar...")
+
             case 2:
-                print("Teste 2")
+                utils.clear_screen()
+                print("=== Lista de Séries/Animes ===\n")
+                # Ajustado para "Serie/Anime" para bater com o que foi salvo no case 1
+                series = db.buscar_midias("Serie/Anime")
+                
+                if not series:
+                    print("Nenhuma série/anime cadastrada ainda.")
+                else:
+                    i = 1
+                    for serie in series:
+                        print(f"{i}. {serie[2]} | Status: {serie[4]} | Nota: {serie[5]} ⭐ | Gênero: {serie[6]} | Temporadas: {serie[10]} | Episódios: {serie[11]} | Ano: {serie[3]} | Autor/Diretor: {serie[7]}")
+                        i += 1
+                input("\nPressione Enter para voltar...")
+
             case 3:
-                print("teste 3")
+                utils.clear_screen()
+                print("=== Lista de Livros ===\n")
+                # Ajustado para "Livro" no singular
+                livros = db.buscar_midias("Livro")
+                
+                if not livros:
+                    print("Nenhum livro cadastrado ainda.")
+                else:
+                    i = 1
+                    for livro in livros:
+                        print(f"{i}. {livro[2]} | Status: {livro[4]} | Nota: {livro[5]} ⭐ | Gênero: {livro[6]} | Autor: {livro[7]} | Páginas: {livro[8]} | Ano: {livro[3]}")
+                        i += 1
+                input("\nPressione Enter para voltar...")
+
             case 4:
-                print("teste 4")
-            case 5:
-                print("teste 5")
+                utils.clear_screen()
+                print("=== Lista de Jogos ===\n")
+                # Ajustado para "Jogo" no singular
+                jogos = db.buscar_midias("Jogo")
+                
+                if not jogos:
+                    print("Nenhum jogo cadastrado ainda.")
+                else:
+                    i = 1
+                    for jogo in jogos:
+                        print(f"{i}. {jogo[2]} | Status: {jogo[4]} | Nota: {jogo[5]} ⭐ | Gênero: {jogo[6]} | Ano: {jogo[3]} | Horas: {jogo[12]}h")
+                        i += 1
+                input("\nPressione Enter para voltar...")
+
             case _:
-                print("Opção invalida")
+                print("Opção inválida")
+                time.sleep(2)
