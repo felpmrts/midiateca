@@ -75,19 +75,72 @@ class DatabaseManager:
     
     def buscar_midias(self, tipo: str = None):
         """
-        Busca as mídias no banco. 
-        Se passar o tipo (ex: 'Livro'), filtra apenas por ele. 
+        Busca as mídias no banco.
+        Se passar o tipo (ex: 'Livro'), filtra apenas por ele.
         Se não passar nada, busca absolutamente tudo.
         """
         with self.conectar() as conexao:
             cursor = conexao.cursor()
-            
+
             if tipo:
                 comando_sql = "SELECT * FROM midias WHERE tipo_midia = ?;"
                 cursor.execute(comando_sql, (tipo,))
             else:
                 comando_sql = "SELECT * FROM midias;"
                 cursor.execute(comando_sql)
-                
+
             # fetchall() traz todas as linhas encontradas no banco em formato de lista
             return cursor.fetchall()
+
+    def buscar_midia_por_id(self, midia_id: int):
+        """
+        Busca uma mídia específica pelo ID
+        """
+        with self.conectar() as conexao:
+            cursor = conexao.cursor()
+            comando_sql = "SELECT * FROM midias WHERE id = ?;"
+            cursor.execute(comando_sql, (midia_id,))
+            return cursor.fetchone()
+
+    def atualizar_midia(self, midia_id: int, tipo: str, dados: dict):
+        """
+        Atualiza uma mídia existente no banco pelo ID
+        """
+        comando_sql = """
+        UPDATE midias SET
+            tipo_midia = ?, titulo = ?, ano = ?, status = ?, nota = ?, genero = ?,
+            autor = ?, paginas = ?, duracao = ?, temporadas = ?, episodios = ?, horas = ?
+        WHERE id = ?;
+        """
+
+        valores = (
+            tipo,
+            dados.get("titulo"),
+            dados.get("ano"),
+            dados.get("status"),
+            dados.get("nota"),
+            dados.get("genero"),
+            dados.get("autor"),
+            dados.get("paginas"),
+            dados.get("duracao"),
+            dados.get("temporadas"),
+            dados.get("episodios"),
+            dados.get("horas"),
+            midia_id
+        )
+
+        with self.conectar() as conexao:
+            cursor = conexao.cursor()
+            cursor.execute(comando_sql, valores)
+            conexao.commit()
+
+    def deletar_midia(self, midia_id: int):
+        """
+        Deleta uma mídia do banco pelo ID
+        """
+        comando_sql = "DELETE FROM midias WHERE id = ?;"
+
+        with self.conectar() as conexao:
+            cursor = conexao.cursor()
+            cursor.execute(comando_sql, (midia_id,))
+            conexao.commit()

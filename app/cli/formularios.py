@@ -116,7 +116,7 @@ def obter_dados_serie_anime() -> dict:
     try:
         ano = int(input("Ano de lançamento: "))
         nota = float(input("Nota (0 a 5): "))
-        temporadas = int(input("Quantidade de temporadas: "))
+        temporadas = int(input("Quantidade de temporadas ou Arcos: "))
         episodios = int(input("Quantidade de episodios: "))
 
         # Retorna um dicionário com tudo organizado
@@ -140,7 +140,7 @@ def obter_dados_jogo() -> dict:
     utils.clear_screen()
 
     print("--- Cadastro do Jogo ---")
-    
+
     # Dados básicos de qualquer mídia
     titulo = input("Título do Jogo: ")
     genero = input("Gênero: ")
@@ -171,7 +171,137 @@ def obter_dados_jogo() -> dict:
             "genero": genero,
             "horas": duracao_horas
         }
-        
+
     except ValueError:
         print("Erro: Ano, Nota e Duração precisam ser valores numéricos!")
+        return None
+
+def editar_livro(dados_atual: dict) -> dict:
+    """
+    Permite editar dados de um livro. Se o usuário não preencher um campo, mantém o original.
+    """
+    utils.clear_screen()
+    print("--- Editar Livro ---")
+    print("(Deixe em branco para manter o valor atual)\n")
+
+    titulo = input(f"Título [{dados_atual['titulo']}]: ") or dados_atual['titulo']
+    genero = input(f"Gênero [{dados_atual['genero']}]: ") or dados_atual['genero']
+
+    status_usuario = ""
+    opcoes_validas = ["lendo", "concluído", "quero ler"]
+    status_entrada = input(f"Status [{dados_atual['status']}] (Lendo / Concluído / Quero Ler): ").lower()
+    status_usuario = status_entrada if status_entrada in opcoes_validas else dados_atual['status']
+
+    try:
+        ano = int(input(f"Ano [{dados_atual['ano']}]: ") or dados_atual['ano'])
+        nota = float(input(f"Nota [{dados_atual['nota']}]: ") or dados_atual['nota'])
+        autor = input(f"Autor [{dados_atual['autor']}]: ") or dados_atual['autor']
+        paginas = int(input(f"Páginas [{dados_atual['paginas']}]: ") or dados_atual['paginas'])
+
+        return {
+            "titulo": titulo,
+            "ano": ano,
+            "status": status_usuario,
+            "nota": nota,
+            "genero": genero,
+            "autor": autor,
+            "paginas": paginas
+        }
+    except ValueError:
+        print("Erro: Campos numéricos inválidos!")
+        return None
+
+def editar_filme(dados_atual: dict) -> dict:
+    utils.clear_screen()
+    print("--- Editar Filme ---")
+    print("(Deixe em branco para manter o valor atual)\n")
+
+    titulo = input(f"Título [{dados_atual['titulo']}]: ") or dados_atual['titulo']
+    genero = input(f"Gênero [{dados_atual['genero']}]: ") or dados_atual['genero']
+
+    status_usuario = ""
+    opcoes_validas = ["concluído", "quero ver"]
+    status_entrada = input(f"Status [{dados_atual['status']}] (Concluído / Quero Ver): ").lower()
+    status_usuario = status_entrada if status_entrada in opcoes_validas else dados_atual['status']
+
+    try:
+        ano = int(input(f"Ano [{dados_atual['ano']}]: ") or dados_atual['ano'])
+        nota = float(input(f"Nota [{dados_atual['nota']}]: ") or dados_atual['nota'])
+        duracao = float(input(f"Duração [h] [{dados_atual['duracao']}]: ") or dados_atual['duracao'])
+
+        return {
+            "titulo": titulo,
+            "ano": ano,
+            "status": status_usuario,
+            "nota": nota,
+            "genero": genero,
+            "duracao": duracao
+        }
+    except ValueError:
+        print("Erro: Campos numéricos inválidos!")
+        return None
+
+def editar_serie_anime(dados_atual: dict) -> dict:
+    utils.clear_screen()
+    print("--- Editar Série/Anime ---")
+    print("(Deixe em branco para manter o valor atual)\n")
+
+    titulo = input(f"Título [{dados_atual['titulo']}]: ") or dados_atual['titulo']
+    genero = input(f"Gênero [{dados_atual['genero']}]: ") or dados_atual['genero']
+
+    status_usuario = ""
+    opcoes_validas = ["assistindo", "concluído", "quero assistir"]
+    status_entrada = input(f"Status [{dados_atual['status']}] (Assistindo / Concluído / Quero Assistir): ").lower()
+    status_usuario = status_entrada if status_entrada in opcoes_validas else dados_atual['status']
+
+    autor = input(f"Autor [{dados_atual['autor']}]: ") or dados_atual['autor']
+
+    try:
+        ano = int(input(f"Ano [{dados_atual['ano']}]: ") or dados_atual['ano'])
+        nota = float(input(f"Nota [{dados_atual['nota']}]: ") or dados_atual['nota'])
+        temporadas = int(input(f"Temporadas [{dados_atual['temporadas']}]: ") or dados_atual['temporadas'])
+        episodios = int(input(f"Episódios [{dados_atual['episodios']}]: ") or dados_atual['episodios'])
+
+        return {
+            "titulo": titulo,
+            "autor": autor,
+            "ano": ano,
+            "status": status_usuario,
+            "nota": nota,
+            "genero": genero,
+            "temporadas": temporadas,
+            "episodios": episodios
+        }
+    except ValueError:
+        print("Erro: Campos numéricos inválidos!")
+        return None
+
+def editar_jogo(dados_atual: dict) -> dict:
+    utils.clear_screen()
+    print("--- Editar Jogo ---")
+    print("(Deixe em branco para manter o valor atual)\n")
+
+    titulo = input(f"Título [{dados_atual['titulo']}]: ") or dados_atual['titulo']
+    genero = input(f"Gênero [{dados_atual['genero']}]: ") or dados_atual['genero']
+
+    status_usuario = ""
+    opcoes_validas = ["jogando", "concluído", "quero jogar"]
+    status_entrada = input(f"Status [{dados_atual['status']}] (Jogando / Concluído / Quero Jogar): ").lower()
+    status_usuario = status_entrada if status_entrada in opcoes_validas else dados_atual['status']
+
+    try:
+        ano = int(input(f"Ano [{dados_atual['ano']}]: ") or dados_atual['ano'])
+        nota = float(input(f"Nota [{dados_atual['nota']}]: ") or dados_atual['nota'])
+        horas = float(input(f"Horas [h] [{dados_atual['horas']}]: ") or dados_atual['horas'])
+
+        return {
+            "titulo": titulo,
+            "ano": ano,
+            "status": status_usuario,
+            "nota": nota,
+            "genero": genero,
+            "horas": horas
+        }
+    except ValueError:
+        print("Erro: Campos numéricos inválidos!")
         return None
